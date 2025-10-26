@@ -39,3 +39,17 @@ int main() {
     display_write(&dp);
 }
 ```
+
+## BUILDING
+One can use `make` or `make build` to build the project.
+
+The make variable `DEBUG` can be set in order to build with debug flags. Such as:
+`make DEBUG=1 build`
+
+## BUILDING DOCS
+- If not already present, doxygen docs can be built with `make docbuild`
+- If the docs are already built, one can rebuild it with `make docregen`
+- I have also provided a convenient wrapper (linux only) to open the docs in the browser `make dochtmlopen`
+
+## OTHER
+While I have implemented matrix-matrix and matrix-vector multiplication along with a pretty error output system. I have not yet made use of it. It was just to see if I could and I like it too much to get rid of it right now.

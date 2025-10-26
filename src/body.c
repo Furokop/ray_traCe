@@ -4,17 +4,11 @@
 #include "ray.h"
 #include "texture.h"
 #include "type.h"
+#include "util.h"
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define MAX_REFL 10
-
-static bool body_ray_impl(const body_rep** const bodies, size_t body_count,
-                          const body_rep* const body, const ray r,
-                          RT_FLOAT* dist, vector3* norm, color* col_out,
-                          int* refl_c);
 
 bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
                 vector3* norm) {
@@ -64,7 +58,7 @@ body_rep body_sphere_new(vector3 center, RT_FLOAT radius, ray_texture tex) {
     sph->center = center;
     sph->R = radius;
 
-    body_rep ret = {(void*)sph, sph_s, tex, &body_ray_col, &sphere_col};
+    body_rep ret = {(void*)sph, sph_s, tex, &sphere_col, &no_free_func};
 
     return ret;
 }
@@ -76,28 +70,22 @@ void body_free(body_rep* body) {
 
 bool body_ray_col(const body_rep** const bodies, size_t body_count,
                   const body_rep* const body, const ray ray_in, color* col_out,
-                  RT_FLOAT* dist) {
-    vector3 vec = vec_zero();
-    int refl_c = 0;
-    return body_ray_impl(bodies, body_count, body, ray_in, dist, &vec, col_out,
-                         &refl_c);
-}
+                  RT_FLOAT* dist, int* refl_c) {
+    vector3 norm = vec_zero();
 
-static bool body_ray_impl(const body_rep** const bodies, size_t body_count,
-                          const body_rep* const body, const ray ray_in,
-                          RT_FLOAT* dist, vector3* norm, color* col_out,
-                          int* refl_c) {
     vector3 point;
     vector3 reflect;
     ray refl;
     color c = color_black();
 
-    if (body->_col_impl(body, ray_in, dist, norm) == true) {
+    if (body->_col_impl(body, ray_in, dist, &norm) == true) {
         // If we haven't hit the max reflection count yet:
+        
+        // Calculate reflected ray
+        point = ray_dist(ray_in, *dist);
+        reflect = vec_refl(ray_in.path, norm);
         if (*refl_c < MAX_REFL) {
-            // Calculate reflected ray
-            point = ray_dist(ray_in, *dist);
-            reflect = vec_refl(ray_in.path, *norm);
+            *refl_c += 1;
 
             // Form new reflected ray
             refl = ray_new(point, reflect);
@@ -108,11 +96,13 @@ static bool body_ray_impl(const body_rep** const bodies, size_t body_count,
             // (current_reflectivity * recursive())
             c = color_sum(
                 color_mul(1.0 - body->tex.reflectivity,
-                          body->tex.refl(body->tex.impl, ray_in, *norm)),
+                          body->tex.refl(body->tex.impl, ray_in, norm)),
                 color_mul(body->tex.reflectivity,
-                          ray_run(bodies, body_count, refl, (void*)body)));
+                          display_run_single_ray(bodies, body_count, refl,
+                                                 (void*)body, refl_c)));
+        } else {
+            return true;
         }
-        *refl_c += 1;
 
         *col_out = c;
         return true;

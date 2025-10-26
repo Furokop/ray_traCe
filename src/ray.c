@@ -2,7 +2,7 @@
 #include "matrix.h"
 
 ray ray_new(vector3 pos, vector3 path) {
-    ray ret = {pos, path};
+    ray ret = {pos, vec_norm(path)};
     return ret;
 }
 

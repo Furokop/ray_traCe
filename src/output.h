@@ -45,8 +45,8 @@ void display_free(display* disp);
  * @param bodies Pointer to beginning of a list of bodies
  * @param body_count Amount of bodies in the given pointer
  */
-void display_run(const display* const disp, const body_rep** const bodies,
-                 size_t body_count);
+void display_run_rays(const display* const disp, const body_rep** const bodies,
+                      size_t body_count);
 
 /// Writes the display data using the data provided by the \b output_impl data
 void display_write(const display* const disp);
@@ -57,11 +57,12 @@ void display_write(const display* const disp);
  * @param body_count Length of the list above
  * @param r Ray to be ran against
  * @param ignore Set to NULL or 0, this is meant for internal use
+ * @param refl_c pointer to reflection counter
  *
  * @returns The final color value to be displayed on the monitor
  */
-color ray_run(const body_rep** const bodies, size_t body_count, ray r,
-              body_rep* ignore);
+color display_run_single_ray(const body_rep** const bodies, size_t body_count,
+                             ray r, body_rep* ignore, int* refl_c);
 
 typedef struct {
     char* disp_out;

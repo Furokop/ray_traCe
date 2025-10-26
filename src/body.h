@@ -10,6 +10,9 @@
 #include "texture.h"
 #include "type.h"
 
+/// Max reflection count
+#define MAX_REFL 10
+
 typedef struct body_rep body_rep;
 
 bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
@@ -59,14 +62,12 @@ typedef struct body_rep {
      * @param r Ray
      * @param dist If return value is true, value at this pointer is set to
      * distance from ray origin to first collision.
-     * @param col_out If returned true, returned color value from the ray.
+     * @param norm Normal vector to the surface which the ray hit
      */
-    bool (*col)(const struct body_rep** const bodies, size_t body_count,
-                const struct body_rep* const body, const ray r, color* col_out,
-                RT_FLOAT* dist);
     bool (*_col_impl)(
         const struct body_rep* const body, const ray r, RT_FLOAT* dist,
         vector3* norm); ///< Collision function implementation. DONT call.
+    void (*impl_free)(void* impl); ///< Body free function
 } body_rep;
 
 /** Returns a spherical body that interacts with rays.
@@ -100,17 +101,19 @@ void body_free(body_rep* body);
 /**  Calculates whether there is a collision with given ray to a given
  * body. If so, the point is returned to the \c res parameter.
  *
- * @param body Pointer to the body representation
- * @param col Ray
- * @param col_p Collision point is set to this, if the return value is true.
- * Else it is unchanged.
- * @param col_inter The interaction that results between the ray and the object.
- * This can be a reflection, refraction etc. return value is true. If there is
- * no collision it is unchanged.
+ * @param bodies List of all bodies that ray can pass
+ * @param body_count Amount of bodies on the list above
+ * @param body The body that is currently being tested
+ * @param r Ray
+ * @param col_out Final returned color value, if return value is true
+ * @param dist Distance to the first collision, for avoiding displaying further
+ * objects before closer
+ * @param refl_c Pointer to reflection counter. Initialize as 0 when first
+ * calling
  * @return Whether the ray collides with the object or not.
  */
 bool body_ray_col(const body_rep** const bodies, size_t body_count,
                   const body_rep* const body, const ray r, color* col_out,
-                  RT_FLOAT* dist);
+                  RT_FLOAT* dist, int* refl_c);
 
 #endif

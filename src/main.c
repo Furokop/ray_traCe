@@ -26,7 +26,7 @@ int main() {
 
     const body_rep* bodies[] = {&sph1, &sph2, &sph3, &sph4, &sph5};
 
-    char* out = "/home/furkito/Desktop/test.ppm";
+    char* out = "./test.ppm";
     disp_ppm writer = {out, strlen(out)};
     display dp = display_init(1920, 1080, 60.0, vec_zero(), &writer, &ppm_out,
                               &no_free_func);

@@ -1,14 +1,11 @@
 #include "texture.h"
 #include "type.h"
 #include "util.h"
+#include <assert.h>
 #include <stdlib.h>
 
 color color_new(COLOR_TYPE r, COLOR_TYPE g, COLOR_TYPE b) {
-    color ret = {
-        r,
-        g,
-        b
-    };
+    color ret = {color_constrain(r), color_constrain(g), color_constrain(b)};
     return ret;
 }
 
@@ -55,21 +52,22 @@ color color_black() {
     return col;
 }
 
-color texture_single_impl(const void *const impl, const ray r, const vector3 norm) {
-    ray_texture_single_color* impl_data = (ray_texture_single_color*) impl;
+color texture_single_impl(const void* const impl, const ray r,
+                          const vector3 norm) {
+    ray_texture_single_color* impl_data = (ray_texture_single_color*)impl;
     return impl_data->col;
 }
 
 ray_texture texture_new_single_color(color col, RT_FLOAT transparency) {
+    assert(transparency < 1.0 && transparency > 0.0);
     ray_texture_single_color* tex_impl =
         (ray_texture_single_color*)malloc(sizeof(ray_texture_single_color));
     tex_impl->col = col;
-    ray_texture ret = {(void*)tex_impl, true,
-                       0.5,
+    ray_texture ret = {(void*)tex_impl, true, transparency,
                        &texture_single_impl, &free_generic_impl};
     return ret;
 }
 
-void texture_free(ray_texture *tex) {
+void texture_free(ray_texture* tex) {
     tex->impl_free(tex->impl);
 }

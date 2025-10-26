@@ -51,7 +51,7 @@ typedef struct ray_texture {
     bool does_reflect;     ///< Does this texture reflect light?
     RT_FLOAT reflectivity; ///< If does_reflect == true, how much does this
                            ///< texture reflect? (MUST be between 0 and 1, 0 =
-                           ///< Absorbs all light, 2 = reflects ALL)
+                           ///< Absorbs all light, 1 = reflects ALL)
     /** Interaction function for the surface itself.
      *
      * @param impl Texture implementation

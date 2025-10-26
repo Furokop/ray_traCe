@@ -19,7 +19,7 @@ static bool body_ray_impl(const body_rep** const bodies, size_t body_count,
 bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
                 vector3* norm) {
     // First collision distance to ray origin
-    RT_FLOAT d_col1, d_col2, d_col;
+    RT_FLOAT d_col;
     // Second collision distance to ray origin
     // Point of the first collision
     vector3 p_col;
@@ -37,12 +37,10 @@ bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
     RT_FLOAT c = vec_dot(oc, oc) - R * R;
     RT_FLOAT disc = b * b - 4 * a * c;
     if (disc >= 0) {
-        d_col1 = (-b - sqrt(disc)) / (2 * a);
-        d_col2 = (-b + sqrt(disc)) / (2 * a);
-        d_col = d_col1 > d_col2 ? d_col1 : d_col2;
+        d_col = (-b - sqrt(disc)) / (2 * a);
         p_col = ray_dist(r, d_col);
 
-        *dist = d_col1;
+        *dist = d_col;
         *norm = vec_norm(vec_sub(p_col, C));
 
         return true;
@@ -81,17 +79,20 @@ static bool body_ray_impl(const body_rep** const bodies, size_t body_count,
                           const body_rep* const body, const ray ray_in,
                           RT_FLOAT* dist, vector3* norm, color* col_out,
                           int* refl_c) {
+    vector3 point;
+    vector3 reflect;
+    ray refl;
     color c = color_black();
+
     if (body->_col_impl(body, ray_in, dist, norm) == true) {
         // If we haven't hit the max reflection count yet:
         if (*refl_c < MAX_REFL) {
             // Calculate reflected ray
-            vector3 point = ray_dist(ray_in, *dist);
-            vector3 reflect = vec_refl(ray_in.path, *norm);
-
+            point = ray_dist(ray_in, *dist);
+            reflect = vec_refl(ray_in.path, *norm);
 
             // Form new reflected ray
-            ray refl = {point, reflect};
+            refl = ray_new(point, reflect);
 
             // Use the new ray
             // This sort of has the function:

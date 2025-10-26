@@ -1,0 +1,7 @@
+.cache
+**.o
+**.d
+notes
+docs
+*.ppm
+ray_trace

@@ -33,7 +33,6 @@ display display_init(int w, int h, RT_FLOAT fov, vector3 pos,
                      void (*free_impl)(void* ptr));
 
 /// Frees the display
-/// UNIMPLEMENTED!
 void display_free(display* disp);
 
 /** Runs the ray tracing routine using the given bodies and display

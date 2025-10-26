@@ -61,8 +61,9 @@ void display_write(const display* const disp);
  *
  * @returns The final color value to be displayed on the monitor
  */
-color display_run_single_ray(const body_rep** const bodies, size_t body_count,
-                             ray r, body_rep* ignore, int* refl_c);
+color display_iterate_single_ray(const body_rep** const bodies,
+                                 size_t body_count, ray r, body_rep* ignore,
+                                 int refl_c);
 
 typedef struct {
     char* disp_out;

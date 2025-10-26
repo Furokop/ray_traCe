@@ -58,12 +58,12 @@ color texture_single_impl(const void* const impl, const ray r,
     return impl_data->col;
 }
 
-ray_texture texture_new_single_color(color col, RT_FLOAT transparency) {
+ray_texture texture_new_single_color(color col, RT_FLOAT transparency, RT_FLOAT diffusivity) {
     assert(transparency < 1.0 && transparency > 0.0);
     ray_texture_single_color* tex_impl =
         (ray_texture_single_color*)malloc(sizeof(ray_texture_single_color));
     tex_impl->col = col;
-    ray_texture ret = {(void*)tex_impl, true, transparency,
+    ray_texture ret = {(void*)tex_impl, true, transparency, diffusivity,
                        &texture_single_impl, &free_generic_impl};
     return ret;
 }

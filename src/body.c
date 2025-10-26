@@ -1,6 +1,5 @@
 #include "body.h"
 #include "matrix.h"
-#include "output.h"
 #include "ray.h"
 #include "texture.h"
 #include "type.h"
@@ -39,6 +38,8 @@ bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
             } else {
                 p_col = ray_dist(r, d_col2);
                 *dist = d_col2;
+                *norm = vec_norm(vec_sub(p_col, C));
+                return true;
             }
         }
         p_col = ray_dist(r, d_col1);
@@ -58,9 +59,51 @@ body_rep body_sphere_new(vector3 center, RT_FLOAT radius, ray_texture tex) {
     sph->center = center;
     sph->R = radius;
 
-    body_rep ret = {(void*)sph, sph_s, tex, &sphere_col, &no_free_func};
+    body_rep ret = {(void*)sph, sph_s, tex, &sphere_col, &free_generic_impl};
 
     return ret;
+}
+
+body_rep body_floor_new(RT_FLOAT y, ray_texture tex) {
+    size_t flr_s = sizeof(body_floor);
+    body_floor* flr;
+
+    flr = (body_floor*)malloc(flr_s);
+    flr->height = y;
+    body_rep ret = {(void*)flr, flr_s, tex, &floor_col, &free_generic_impl};
+
+    return ret;
+}
+
+bool floor_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
+               vector3* norm) {
+    body_floor* flr = (body_floor*)body->body;
+    RT_FLOAT y_diff;
+
+    y_diff = r.pos.j - flr->height;
+    // If ray is above the floor:
+    if (y_diff >= 0.0) {
+        // And if the ray points downwards
+        if (y_diff * r.path.j < 0.0) {
+            *dist = -y_diff / r.path.j;
+            *norm = vec3(0.0, 1.0, 0.0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    // If ray is below the floor:
+    else if (y_diff < 0.0) {
+        // And if the ray points upwards
+        if (y_diff * r.path.j < 0.0) {
+            *dist = -y_diff / r.path.j;
+            *norm = vec3(0.0, -1.0, 0.0);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    return false;
 }
 
 void body_free(body_rep* body) {
@@ -68,43 +111,27 @@ void body_free(body_rep* body) {
     texture_free(&body->tex);
 }
 
-bool body_ray_col(const body_rep** const bodies, size_t body_count,
-                  const body_rep* const body, const ray ray_in, color* col_out,
-                  RT_FLOAT* dist, int* refl_c) {
-    vector3 norm = vec_zero();
+bool body_ray_col(const body_rep* const body, const ray ray_in,
+                  RT_FLOAT* dist, ray* refl_ray, vector3* norm) {
 
     vector3 point;
     vector3 reflect;
-    ray refl;
-    color c = color_black();
 
-    if (body->_col_impl(body, ray_in, dist, &norm) == true) {
+    if (body->_col_impl(body, ray_in, dist, norm) == true) {
         // If we haven't hit the max reflection count yet:
-        
+
         // Calculate reflected ray
         point = ray_dist(ray_in, *dist);
-        reflect = vec_refl(ray_in.path, norm);
-        if (*refl_c < MAX_REFL) {
-            *refl_c += 1;
+        reflect = vec_refl_diff(ray_in.path, *norm, body->tex.diffusivity);
 
-            // Form new reflected ray
-            refl = ray_new(point, reflect);
+        // Form new reflected ray
+        *refl_ray = ray_new(point, reflect);
 
-            // Use the new ray
-            // This sort of has the function:
-            // color = current_color * (1 - current_reflectivity) +
-            // (current_reflectivity * recursive())
-            c = color_sum(
-                color_mul(1.0 - body->tex.reflectivity,
-                          body->tex.refl(body->tex.impl, ray_in, norm)),
-                color_mul(body->tex.reflectivity,
-                          display_run_single_ray(bodies, body_count, refl,
-                                                 (void*)body, refl_c)));
-        } else {
-            return true;
-        }
+        // Use the new ray
+        // This sort of has the function:
+        // color = current_color * (1 - current_reflectivity) +
+        // (current_reflectivity * recursive())
 
-        *col_out = c;
         return true;
     }
     // This only matters if there has been absolutely no collision

@@ -171,6 +171,13 @@ vector3 vec3(RT_FLOAT i, RT_FLOAT j, RT_FLOAT k) {
     return ret;
 }
 
+vector3 vec_rand(RT_FLOAT min, RT_FLOAT max) {
+    float i = min + (float)rand()/(float)(RAND_MAX/max);
+    float j = min + (float)rand()/(float)(RAND_MAX/max);
+    float k = min + (float)rand()/(float)(RAND_MAX/max);
+    return vec3(i, j, k);
+}
+
 vector3 vec_zero() {
     vector3 ret = {0.0, 0.0, 0.0};
     return ret;
@@ -223,6 +230,13 @@ vector3 vec_mul(RT_FLOAT val, vector3 vec) {
 
 vector3 vec_refl(vector3 in, vector3 norm) {
     vector3 ret = vec_sum(in, vec_mul(-2.0, vec_mul(vec_dot(in, norm), norm)));
+    return ret;
+}
+
+vector3 vec_refl_diff(const vector3 path, const vector3 norm, RT_FLOAT diff) {
+    vector3 ret = vec_refl(path, norm);
+    vector3 rand = vec_rand(0.0, diff);
+    ret = vec_sum(ret, rand);
     return ret;
 }
 

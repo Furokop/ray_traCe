@@ -52,6 +52,8 @@ typedef struct ray_texture {
     RT_FLOAT reflectivity; ///< If does_reflect == true, how much does this
                            ///< texture reflect? (MUST be between 0 and 1, 0 =
                            ///< Absorbs all light, 1 = reflects ALL)
+    RT_FLOAT diffusivity;  ///< How much will the reflections diffuse? 0 = NONE,
+                           ///< 1 = ALL
     /** Interaction function for the surface itself.
      *
      * @param impl Texture implementation
@@ -75,7 +77,8 @@ color texture_single_impl(const void* const impl, const ray r,
                           const vector3 norm);
 
 /// Initialize a new empty texture struct with the given color
-ray_texture texture_new_single_color(color col, RT_FLOAT transparency);
+ray_texture texture_new_single_color(color col, RT_FLOAT reflectivity,
+                                     RT_FLOAT diffusivity);
 
 /// Free the texture struct given.
 void texture_free(ray_texture* tex);

@@ -15,24 +15,6 @@
 
 typedef struct body_rep body_rep;
 
-bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
-                vector3* norm);
-
-/// Rectangular prism body geometric data
-typedef struct body_box {
-    vector3 center; ///< Rectangle center
-    vector3 point;  ///< Rectangle direction
-    RT_FLOAT w_x;   ///< Width x
-    RT_FLOAT w_y;   ///< Width y
-    RT_FLOAT w_z;   ///< Width z
-} body_box;
-
-/// Spherical body geometric data
-typedef struct body_sphere {
-    vector3 center; ///< Sphere center
-    RT_FLOAT R;     ///< Sphere radius
-} body_sphere;
-
 /** General type for pointing to bodies
  *
  * We use function pointers per each object type. I suppose supporting mesh
@@ -70,6 +52,12 @@ typedef struct body_rep {
     void (*impl_free)(void* impl); ///< Body free function
 } body_rep;
 
+/// Spherical body geometric data
+typedef struct body_sphere {
+    vector3 center; ///< Sphere center
+    RT_FLOAT R;     ///< Sphere radius
+} body_sphere;
+
 /** Returns a spherical body that interacts with rays.
  *
  * @param center Center of the sphere
@@ -78,19 +66,17 @@ typedef struct body_rep {
  */
 body_rep body_sphere_new(vector3 center, RT_FLOAT radius, ray_texture tex);
 
-/**  Returns a rectangular prism that interacts with rays.
- *
- * @param center Center of prism
- * @param point The vector that the prism faces
- * @param width_x X direction
- * @param width_y Y direction
- * @param width_z Z direction
- * @return The body_rep that corresponds to the prism
- *
- * UNIMPLEMENTED!
- */
-body_rep body_box_new(vector3 center, vector3 point, RT_FLOAT width_x,
-                      RT_FLOAT width_y, RT_FLOAT width_z);
+bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
+                vector3* norm);
+
+typedef struct {
+    RT_FLOAT height;
+} body_floor;
+
+body_rep body_floor_new(RT_FLOAT y, ray_texture tex);
+
+bool floor_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
+               vector3* norm);
 
 /**  Frees the body pointer
  *
@@ -101,19 +87,16 @@ void body_free(body_rep* body);
 /**  Calculates whether there is a collision with given ray to a given
  * body. If so, the point is returned to the \c res parameter.
  *
- * @param bodies List of all bodies that ray can pass
- * @param body_count Amount of bodies on the list above
  * @param body The body that is currently being tested
  * @param r Ray
  * @param col_out Final returned color value, if return value is true
  * @param dist Distance to the first collision, for avoiding displaying further
  * objects before closer
- * @param refl_c Pointer to reflection counter. Initialize as 0 when first
- * calling
+ * @param refl_ray Pointer to reflection ray
+ * @param norm Pointer to collision surface normal
  * @return Whether the ray collides with the object or not.
  */
-bool body_ray_col(const body_rep** const bodies, size_t body_count,
-                  const body_rep* const body, const ray r, color* col_out,
-                  RT_FLOAT* dist, int* refl_c);
+bool body_ray_col(const body_rep* const body, const ray ray_in, RT_FLOAT* dist,
+                  ray* refl_ray, vector3* norm);
 
 #endif

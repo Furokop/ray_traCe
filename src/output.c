@@ -22,10 +22,9 @@ void display_free(display* disp) {
 }
 
 void display_run_rays(const display* const disp, const body_rep** const bodies,
-                 size_t body_count) {
+                      size_t body_count) {
     color c;
     ray r;
-    int refl_c;
     RT_FLOAT ratio = (RT_FLOAT)disp->d_w /
                      (RT_FLOAT)disp->d_h; // Width to height ratio for display
     RT_FLOAT z = 1.0; // Our pretend distance to the "display"
@@ -42,14 +41,14 @@ void display_run_rays(const display* const disp, const body_rep** const bodies,
     for (int i = 0; i < disp->d_h; i++) {
         // Width iteration
         for (int j = 0; j < disp->d_w; j++) {
-            refl_c = 0;
             size_t index = i * disp->d_w + j;
             // Construct fake coordinate to determine the path of the ray
             vector3 path = vec_norm(vec3(
                 (2.0 * (j + 0.5) / (RT_FLOAT)disp->d_w - 1.0) * disp_x,
                 (1.0 - 2.0 * (i + 0.5) / (RT_FLOAT)disp->d_h) * disp_y, z));
             r = ray_new(disp->pos, path);
-            c = display_run_single_ray(bodies, body_count, r, NULL, &refl_c);
+            c = display_iterate_single_ray(bodies, body_count, r, NULL,
+                                           MAX_REFL);
             disp->color_buffer[index] = c;
         }
     }
@@ -59,30 +58,49 @@ void display_write(const display* const disp) {
     disp->out(disp);
 }
 
-color display_run_single_ray(const body_rep** const bodies, size_t body_count, ray r,
-              body_rep* ignore, int* refl_c) {
+color display_iterate_single_ray(const body_rep** const bodies,
+                                 size_t body_count, ray r, body_rep* ignore,
+                                 int refl_c) {
     body_rep const* ref;
     color ret, c_tmp;
     RT_FLOAT z, z_min;
-    bool first_col = true;
+    ray refl;
+    vector3 norm;
+    bool first_col;
 
+    first_col = true;
     z = 0.0;
     z_min = 0.0;
+
     // Background color as well
     ret = color_new(0.71, 0.784, 0.798);
-    c_tmp = color_new(0.71, 0.784, 0.798);
     // Iterate through each body
     for (size_t i = 0; i < body_count; i++) {
         ref = bodies[i];
         if (ref == ignore) {
             continue;
         }
-        if (body_ray_col(bodies, body_count, ref, r, &c_tmp, &z, refl_c))
+        // If we collide
+        if (body_ray_col(ref, r, &z, &refl, &norm)) {
+            if (refl_c != 0) {
+                c_tmp =
+                    color_sum(color_mul(1.0 - ref->tex.reflectivity,
+                                        ref->tex.refl(ref->tex.impl, r, norm)),
+                              color_mul(ref->tex.reflectivity,
+                                        display_iterate_single_ray(
+                                            bodies, body_count, refl,
+                                            (body_rep*)ref, refl_c - 1)));
+            } else {
+                c_tmp = color_mul(1.0 - ref->tex.reflectivity,
+                                  ref->tex.refl(ref->tex.impl, r, norm));
+            }
+            // We only draw the closest object
             if (first_col || z < z_min) {
                 first_col = false;
                 z_min = z;
                 ret = c_tmp;
             }
+        }
     }
     return ret;
 }

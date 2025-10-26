@@ -40,6 +40,9 @@ int main() {
 }
 ```
 
+Result:
+![Output image in PPM](/res/example.png)
+
 ## Building
 One can use `make` or `make build` to build the project.
 

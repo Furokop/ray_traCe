@@ -5,3 +5,4 @@ notes
 docs
 *.ppm
 ray_trace
+compile_commands.json

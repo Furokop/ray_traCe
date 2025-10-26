@@ -19,7 +19,7 @@ static bool body_ray_impl(const body_rep** const bodies, size_t body_count,
 bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
                 vector3* norm) {
     // First collision distance to ray origin
-    RT_FLOAT d_col;
+    RT_FLOAT d_col1, d_col2;
     // Second collision distance to ray origin
     // Point of the first collision
     vector3 p_col;
@@ -37,10 +37,18 @@ bool sphere_col(const body_rep* const body, const ray r, RT_FLOAT* dist,
     RT_FLOAT c = vec_dot(oc, oc) - R * R;
     RT_FLOAT disc = b * b - 4 * a * c;
     if (disc >= 0) {
-        d_col = (-b - sqrt(disc)) / (2 * a);
-        p_col = ray_dist(r, d_col);
-
-        *dist = d_col;
+        d_col1 = (-b - sqrt(disc)) / (2 * a);
+        d_col2 = (-b + sqrt(disc)) / (2 * a);
+        if (d_col1 < 0.0) {
+            if (d_col2 < 0.0) {
+                return false;
+            } else {
+                p_col = ray_dist(r, d_col2);
+                *dist = d_col2;
+            }
+        }
+        p_col = ray_dist(r, d_col1);
+        *dist = d_col1;
         *norm = vec_norm(vec_sub(p_col, C));
 
         return true;

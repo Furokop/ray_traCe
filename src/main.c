@@ -22,7 +22,8 @@ int main() {
     body_rep sph5 = body_sphere_new(
         vec3(1.0, 8.0, 15.0), 4.0,
         texture_new_single_color(color_new(0.5, 0.2, 0.9), 0.5, 0.05));
-    body_rep flr1 = body_floor_new(-5.0, texture_new_single_color(color_new(0.0, 0.09, 0.5), 0.5, 0.0));
+    body_rep flr1 = body_floor_new(
+        -5.0, texture_new_single_color(color_new(0.0, 0.09, 0.5), 0.5, 0.0));
 
     const body_rep* bodies[] = {&sph1, &sph2, &sph3, &sph4, &sph5, &flr1};
 

@@ -1,3 +1,8 @@
+# ray_traCe
+Small ray_tracing demo I made to learn how it works
+
+main.c holds an example code:
+`c
 #include "body.h"
 #include "matrix.h"
 #include "output.h"
@@ -33,3 +38,4 @@ int main() {
     display_run_rays(&dp, bodies, 6);
     display_write(&dp);
 }
+`

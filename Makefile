@@ -9,7 +9,7 @@ LDLIBS := $(addprefix -l,$(LIBS))
 DOCFILE_TMP = docstmp
 DOCFILE = docs
 
-CFLAGS += -Wall -MMD
+CFLAGS += -Wall -MMD -Isrc
 # C compiler flags
 ifeq ($(TEST), 1)
 	CFLAGS += -DTEST=1

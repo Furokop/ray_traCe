@@ -1,8 +1,8 @@
-#include "body.h"
-#include "matrix.h"
-#include "output.h"
-#include "texture.h"
-#include "util.h"
+#include <include/body.h>
+#include <include/math.h>
+#include <include/output.h>
+#include <include/texture.h>
+#include <include/util.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -33,4 +33,6 @@ int main() {
                               &no_free_func);
     display_run_rays(&dp, bodies, 6);
     display_write(&dp);
+
+    // NOTE: ADD FREE CODE!!!!! QWEKQEQEKWQELMWA
 }

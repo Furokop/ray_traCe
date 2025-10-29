@@ -1,9 +1,7 @@
 #include "body.h"
-#include "matrix.h"
-#include "ray.h"
-#include "texture.h"
-#include "type.h"
-#include "util.h"
+#include <include/math.h>
+#include <include/texture.h>
+#include <include/util.h>
 
 #include <math.h>
 #include <stdio.h>

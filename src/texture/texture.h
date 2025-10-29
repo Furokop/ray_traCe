@@ -1,9 +1,8 @@
 #ifndef RAY_TRACE_TEXTURE_H
 #define RAY_TRACE_TEXTURE_H
 
-#include "matrix.h"
-#include "ray.h"
-#include "type.h"
+#include <include/math.h>
+#include <include/util.h>
 
 #include <stdbool.h>
 

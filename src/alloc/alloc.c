@@ -1,5 +1,5 @@
 #include "alloc.h"
-#include "errors.h"
+#include <include/errors.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>

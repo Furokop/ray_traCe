@@ -1,11 +1,10 @@
 #ifndef RAY_TRACE_OUTPUT_H
 #define RAY_TRACE_OUTPUT_H
 
-#include "body.h"
-#include "matrix.h"
-#include "ray.h"
-#include "texture.h"
-#include "type.h"
+#include <include/body.h>
+#include <include/math.h>
+#include <include/texture.h>
+#include <include/util.h>
 
 #include <stddef.h>
 

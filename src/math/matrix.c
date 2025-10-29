@@ -4,9 +4,9 @@
 #include <string.h>
 #include <time.h>
 
-#include "errors.h"
+#include <include/errors.h>
 #include "matrix.h"
-#include "type.h"
+#include <include/util.h>
 
 r_matrix r_mat_alloc(I_MAT row, I_MAT col) {
     I_MAT n = row * col;

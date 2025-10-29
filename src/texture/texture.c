@@ -1,6 +1,5 @@
-#include "texture.h"
-#include "type.h"
-#include "util.h"
+#include <include/texture.h>
+#include <include/util.h>
 #include <assert.h>
 #include <stdlib.h>
 

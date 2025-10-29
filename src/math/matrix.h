@@ -1,8 +1,8 @@
 #ifndef RAY_TRACE_COORD_H
 #define RAY_TRACE_COORD_H
 
-#include "errors.h"
-#include "type.h"
+#include <include/errors.h>
+#include <include/util.h>
 
 /** A row major matrix implementation.
  *

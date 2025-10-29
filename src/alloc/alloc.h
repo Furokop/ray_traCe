@@ -1,7 +1,7 @@
 #ifndef RAY_TRACE_ALLOC_H
 #define RAY_TRACE_ALLOC_H
 
-#include "errors.h"
+#include <include/errors.h>
 #include <stddef.h>
 
 #define RTVEC_DEF_COUNT 10

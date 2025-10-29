@@ -2,7 +2,7 @@
 #define RAY_TRACE_RAY_H
 
 #include "matrix.h"
-#include "type.h"
+#include <include/util.h>
 #include <stddef.h>
 
 /// Ray that holds two vectors, one for position and one for direction.

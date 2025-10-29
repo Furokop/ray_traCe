@@ -5,13 +5,12 @@
 #include <stddef.h>
 
 // 3D rectangular prism body
-#include "matrix.h"
-#include "ray.h"
-#include "texture.h"
-#include "type.h"
+#include <include/math.h>
+#include <include/texture.h>
+#include <include/util.h>
 
 /// Max reflection count
-#define MAX_REFL 10
+#define MAX_REFL 100
 
 typedef struct body_rep body_rep;
 

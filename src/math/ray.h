@@ -1,9 +1,11 @@
 #ifndef RAY_TRACE_RAY_H
 #define RAY_TRACE_RAY_H
 
-#include "matrix.h"
-#include <include/util.h>
 #include <stddef.h>
+
+#include <include/util.h>
+
+#include "vector.h"
 
 /// Ray that holds two vectors, one for position and one for direction.
 typedef struct {

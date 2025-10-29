@@ -3,7 +3,6 @@
 #include <include/output.h>
 #include <include/texture.h>
 #include <include/util.h>
-#include <stdio.h>
 #include <string.h>
 
 int main() {

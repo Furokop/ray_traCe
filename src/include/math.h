@@ -3,5 +3,7 @@
 
 #include <math/matrix.h>
 #include <math/ray.h>
+#include <math/vec_mat.h>
+#include <math/vector.h>
 
 #endif

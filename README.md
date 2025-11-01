@@ -38,6 +38,14 @@ int main() {
                               &no_free_func);
     display_run_rays(&dp, bodies, 6);
     display_write(&dp);
+
+    display_free(&dp);
+    body_free(&sph1);
+    body_free(&sph2);
+    body_free(&sph3);
+    body_free(&sph4);
+    body_free(&sph5);
+    body_free(&flr1);
 }
 ```
 

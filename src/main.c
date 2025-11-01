@@ -1,3 +1,5 @@
+#include "body/body.h"
+#include "output/output.h"
 #include <include/body.h>
 #include <include/math.h>
 #include <include/output.h>
@@ -34,4 +36,11 @@ int main() {
     display_write(&dp);
 
     // NOTE: ADD FREE CODE!!!!! QWEKQEQEKWQELMWA
+    display_free(&dp);
+    body_free(&sph1);
+    body_free(&sph2);
+    body_free(&sph3);
+    body_free(&sph4);
+    body_free(&sph5);
+    body_free(&flr1);
 }

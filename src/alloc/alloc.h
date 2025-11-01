@@ -7,16 +7,12 @@
 #define RTVEC_DEF_COUNT 10
 #define RTVEC_DEF_EXP 1.25
 
-// Vector type implementation
+/// Resizeable vector type
 typedef struct {
-    // data count
-    size_t data_count;
-    // size of data block
-    size_t max_data_count;
-    // pointer to data
-    void* data;
-    // sizeof(data_t)
-    size_t data_size;
+    size_t data_count;     ///< data count
+    size_t max_data_count; ///< size of data block
+    void* data;            ///< pointer to data
+    size_t data_size;      ///< sizeof(data_t)
 } rtvec;
 
 /// Initialize new rtvec type.

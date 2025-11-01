@@ -17,7 +17,7 @@ rtvec rtvec_alloc(size_t size) {
 
 void rtvec_realloc(rtvec* vec, int n) {
     vec->max_data_count = n;
-    void* ptr = realloc(vec->data, n);
+    void* ptr = realloc(vec->data, n * vec->data_size);
     vec->data = ptr;
 }
 
